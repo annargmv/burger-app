@@ -7,8 +7,34 @@ import Input from '../../../components/UI/Input/Input';
 
 class ContactData extends Component{
     state = {
-        name: '',
-        email: '',
+       orderForm = {
+            name: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'text',
+                    placeholder: 'Your Name'
+                },
+                value: '',
+            },
+            email: {
+                elementType: 'input',
+                elementConfig: {
+                    type: 'email',
+                    placeholder: 'Your E-Mail'
+                },
+                value: '',
+            },
+            deliveryMethod: {
+                elementType: 'select',
+                elementConfig: {
+                    options: [
+                        {value: 'fastest', displayValue: 'Fastest'},
+                        {value: 'cheapest', displayValue: 'Cheapest'}
+                    ]
+                },
+                value: '',
+            }
+       },
         loading: false
     }
 
@@ -18,10 +44,6 @@ class ContactData extends Component{
         const order = {
             ingredients: this.props.ingredients,
             price: this.props.price,
-            customer: {
-                name: 'Anna',
-                email: 'anna@test.com'
-            }
         }
         console.log(order);
         axios.post('/orders.json', order)
@@ -36,7 +58,7 @@ class ContactData extends Component{
 
     render() {
         let form = (<form>
-            <Input inputtype="input" type="text" name="name" placeholder='Your name'/>
+            <Input elementType="..." elementConfig="..." value="..." />
             <Input inputtype="input" type="text" name="email" placeholder='Your email'/>
             <Button inputtype="input" btnType="Success" clicked={this.orderHandler}>Order</Button>
         </form>);
