@@ -7,7 +7,7 @@ import Input from '../../../components/UI/Input/Input';
 
 class ContactData extends Component{
     state = {
-       orderForm = {
+       orderForm: {
             name: {
                 elementType: 'input',
                 elementConfig: {
@@ -56,12 +56,49 @@ class ContactData extends Component{
         });
     }
 
+    inputChangedHandler = (event, inputIdentifier) => {
+        const updatedOrderForm = {
+            ...this.state.orderForm
+        };
+        const updatedFormElement = { 
+            ...updatedOrderForm[inputIdentifier]
+        };
+        updatedFormElement.value = event.target.value;
+        // updatedFormElement.valid = this.checkValidity(updatedFormElement.value, updatedFormElement.validation);
+        // updatedFormElement.touched = true;
+        // updatedOrderForm[inputIdentifier] = updatedFormElement;
+        
+        // let formIsValid = true;
+        // for (let inputIdentifier in updatedOrderForm) {
+        //     formIsValid = updatedOrderForm[inputIdentifier].valid && formIsValid;
+        // }
+        this.setState({orderForm: updatedOrderForm});
+    }
+
     render() {
-        let form = (<form>
-            <Input elementType="..." elementConfig="..." value="..." />
-            <Input inputtype="input" type="text" name="email" placeholder='Your email'/>
-            <Button inputtype="input" btnType="Success" clicked={this.orderHandler}>Order</Button>
-        </form>);
+        const formElementsArray = [];
+        for (let key in this.state.orderForm) {
+            formElementsArray.push({
+                id: key,
+                config: this.state.orderForm[key]
+            });
+        }
+        let form = (
+            <form onSubmit={this.orderHandler}>
+                {formElementsArray.map(formElement => (
+                    <Input 
+                        key={formElement.id}
+                        elementType={formElement.config.elementType}
+                        elementConfig={formElement.config.elementConfig}
+                        value={formElement.config.value}
+                        invalid={!formElement.config.valid}
+                        shouldValidate={formElement.config.validation}
+                        touched={formElement.config.touched}
+                        changed={(event) => this.inputChangedHandler(event, formElement.id)} />
+                ))}
+                <Button inputtype="input" btnType="Success" clicked={this.orderHandler}>Order</Button>
+            </form>
+        );
         if (this.state.loading) {
             form = <Spinner />;
         }
