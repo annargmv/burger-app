@@ -4,29 +4,21 @@ import Burger from '../../components/Burger/Burger';
 import BuildControls from '../../components/Burger/BuildControls/BuildContorols'; 
 import Modal from '../../components/UI/Modal/Modal';
 import OrderSummary from '../../components/Burger/OrderSummary/OrderSummary';
-import axios from '../../axios-orders';
 import withErrorHandler from '../../hoc/withErrorHandler/withErrorHnadler';
 import Spinner from '../../components/UI/Spinner/Spinner';
 import { connect } from 'react-redux';
-import * as actionTypes from '../../store/actions';
+import * as actionTypes from '../../store/actions/index';
+import axios from '../../axios-orders';
 
 class BurgerBuilder extends Component{
     state = {
-        purchasing: false,
-        loading: false,
-        error: false
+        purchasing: false
     }
 
     componentDidMount () {
-        console.log(this.props)
-        // axios.get('https://burger-app-bbaa4.firebaseio.com/ingredients.json')
-        //     .then(response => {
-        //         this.setState({ingredients: response.data});
-        //         return response;
-        //     })
-        //     .catch(error => {
-        //         this.setState({error: true});
-        //     });
+        console.log(this.props);
+        this.props.onInintIngredients();
+
     }
 
     purchaseHandler = () => {
@@ -63,7 +55,7 @@ class BurgerBuilder extends Component{
             disabledInfo[key] = disabledInfo[key] <= 0;
         }
         let orderSummary = null;
-        let burger = this.state.error ? <p>not ingredients</p> : <Spinner/>
+        let burger = this.props.error ? <p>not ingredients</p> : <Spinner/>
 
         if (this.props.ings) {
             burger = (
@@ -84,9 +76,6 @@ class BurgerBuilder extends Component{
             totalPrice={this.props.price}
             purchaseContinue={this.purchaseContinueHandler}/>;       
         }
-        if (this.state.loading) {
-            orderSummary = <Spinner />
-        }
         return(
             <Aux>
                 <Modal show={this.state.purchasing} modalClosed={this.purchaseClosedHandler}>
@@ -102,15 +91,15 @@ const mapStateToProps = state => {
     return {
         ings: state.ingredients,
         price: state.totalPrice,
+        error: state.error
     };
 }
 
 const mapDispatchToProps = dispatch => {
     return {
-        onIngredientAdded: (ingName) => dispatch({
-            type: actionTypes.ADD_INGREDIENT, ingredientName: ingName}),
-        onIngredientRemoved: (ingName) => dispatch({
-            type: actionTypes.REMOVE_INGREDIENT, ingredientName: ingName})    
+        onIngredientAdded: (ingName) => dispatch(actionTypes.addIngredient(ingName)),
+        onIngredientRemoved: (ingName) => dispatch(actionTypes.removeIngredient(ingName)),
+        onInintIngredients: () =>  dispatch(actionTypes.initIngredients()),
     };
 }
 
